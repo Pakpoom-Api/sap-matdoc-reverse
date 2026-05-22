@@ -1,0 +1,18 @@
+*&---------------------------------------------------------------------*
+*& Behavior Definition (Projection): ZC_MM_MATDOCREV
+*& Exposes only the action to Fiori UI via OData V4
+*&---------------------------------------------------------------------*
+
+projection;
+strict ( 2 );
+
+define behavior for ZC_MM_MATDOCREV alias MatDocRev
+{
+  use action ReverseMaterialDocument;
+  use association _item { }
+}
+
+define behavior for ZC_MM_MATDOCREV_ITEM alias MatDocRevItem
+{
+  use association _MatDocRev { }
+}

@@ -1,0 +1,48 @@
+@AbapCatalog.viewEnhancementCategory: [#NONE]
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Reverse Material Document - Interface Root View'
+@Metadata.ignorePropagatedAnnotations: true
+@ObjectModel.usageType: {
+    serviceQuality: #X,
+    sizeCategory: #M,
+    dataClass: #TRANSACTIONAL
+}
+define root view entity ZI_MM_MATDOCREV
+  as select from I_MaterialDocumentTP
+  composition [0..*] of ZI_MM_MATDOCREV_ITEM as _item
+{
+  key MaterialDocument,
+  key MaterialDocumentYear,
+
+      PostingDate,
+      DocumentDate,
+      MaterialDocumentHeaderText,
+      GoodsMovementCode,
+
+      " Reversal reference — used by get_instance_features to disable action
+      ReverseDocument,
+      ReverseDocumentYear,
+
+      " Admin fields
+      @Semantics.user.createdBy: true
+      CreatedByUser,
+
+      @Semantics.systemDateTime.createdAt: true
+      CreationDateTime,
+
+      " Computed reversal status: 'X' = already reversed, ' ' = active
+      case
+        when ReverseDocument is not initial then 'X'
+        else ' '
+      end                  as IsReversed,
+
+      " Criticality value for UI coloring:
+      " 3 = Error (red icon) when already reversed
+      " 0 = Normal when active
+      case
+        when ReverseDocument is not initial then 3
+        else 0
+      end                  as ReversalCriticality,
+
+      _item
+}

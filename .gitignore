@@ -1,0 +1,46 @@
+# ── OS files ──────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Windows ───────────────────────────────────
+*.lnk
+*.tmp
+$RECYCLE.BIN/
+
+# ── SAP / ABAP tools ──────────────────────────
+# ADT project files (Eclipse)
+.project
+.classpath
+.settings/
+*.abapgit.xml.bak
+
+# abapGit local settings
+.abapgit_local/
+
+# SAP Fiori tools generated (keep manifest, ignore cache)
+node_modules/
+.fioritools/
+*.fiori-cache
+dist/
+webapp/test-results/
+
+# SAP BAS (Business Application Studio)
+.vscode/
+*.vsix
+
+# ── Editor ────────────────────────────────────
+*.swp
+*.swo
+*~
+.idea/
+
+# ── Logs ──────────────────────────────────────
+*.log
+npm-debug.log*
+
+# ── Secrets — never commit these ──────────────
+*.env
+.env.*
+secrets.txt
+token.txt

@@ -1,0 +1,139 @@
+*&---------------------------------------------------------------------*
+*& Class (Behavior Pool): ZBP_I_MM_MATDOCREV
+*& BDEF  : ZI_MM_MATDOCREV (unmanaged, action-only)
+*& Pattern: Unmanaged handler — delegates to ZCL_MM_MATDOCREV_ACTION
+*&---------------------------------------------------------------------*
+
+CLASS ZBP_I_MM_MATDOCREV DEFINITION PUBLIC ABSTRACT FINAL
+  FOR BEHAVIOR OF ZI_MM_MATDOCREV.
+ENDCLASS.
+CLASS ZBP_I_MM_MATDOCREV IMPLEMENTATION.
+ENDCLASS.
+
+
+"══════════════════════════════════════════════════════════════════════
+" LOCAL CLASS: Global state carrier
+"══════════════════════════════════════════════════════════════════════
+
+CLASS lcl_global DEFINITION.
+  PUBLIC SECTION.
+    " Populated by action handler; readable across methods if needed
+    CLASS-DATA: gv_last_reversed_doc  TYPE mblnr,
+                gv_last_reversed_year TYPE mjahr.
+ENDCLASS.
+CLASS lcl_global IMPLEMENTATION.
+ENDCLASS.
+
+
+"══════════════════════════════════════════════════════════════════════
+" LOCAL CLASS: Handler — ZI_MM_MATDOCREV
+"══════════════════════════════════════════════════════════════════════
+
+CLASS lhc_ZI_MM_MATDOCREV DEFINITION
+  INHERITING FROM cl_abap_behavior_handler.
+
+  PRIVATE SECTION.
+
+    METHODS:
+      " Controls ReverseMaterialDocument button enable / disable per row
+      get_instance_features FOR INSTANCE FEATURES
+        IMPORTING keys             REQUEST requested_features
+                  FOR MatDocRev   RESULT  result,
+
+      " Global authorization check — controls overall action permission
+      get_global_authorizations FOR GLOBAL AUTHORIZATION
+        IMPORTING REQUEST requested_authorizations FOR MatDocRev
+        RESULT result,
+
+      " Main action handler
+      ReverseMaterialDocument FOR MODIFY
+        IMPORTING keys FOR ACTION MatDocRev~ReverseMaterialDocument
+        RESULT result.
+
+ENDCLASS.
+
+CLASS lhc_ZI_MM_MATDOCREV IMPLEMENTATION.
+
+  METHOD get_instance_features.
+    " ── Read current state from ZI_MM_MATDOCREV (selects I_MaterialDocumentTP) ──
+    READ ENTITIES OF ZI_MM_MATDOCREV IN LOCAL MODE
+      ENTITY MatDocRev
+      FIELDS ( ReverseDocument IsReversed )
+      WITH CORRESPONDING #( keys )
+      RESULT DATA(lt_data).
+
+    " ── Disable action when document is already reversed ──
+    result = VALUE #( FOR ls IN lt_data (
+      %tky = ls-%tky
+      %features-%action-ReverseMaterialDocument =
+        COND #( WHEN ls-IsReversed = 'X'
+                THEN if_abap_behv=>fc-o-disabled   " Already reversed → grey out
+                ELSE if_abap_behv=>fc-o-enabled )
+    ) ).
+  ENDMETHOD.
+
+
+  METHOD get_global_authorizations.
+    " ── Allow action globally; fine-grained auth handled by IAM catalog ──
+    " For stricter authorization: check M_MSEG_BWA / M_MSEG_WMB objects here
+    result-%action-ReverseMaterialDocument = if_abap_behv=>auth-allowed.
+  ENDMETHOD.
+
+
+  METHOD ReverseMaterialDocument.
+    " ── Step 1: Read all selected documents in one EML call ──
+    READ ENTITIES OF ZI_MM_MATDOCREV IN LOCAL MODE
+      ENTITY MatDocRev
+      ALL FIELDS
+      WITH CORRESPONDING #( keys )
+      RESULT DATA(lt_matdocs).
+
+    " ── Step 2: Process each document individually ──
+    LOOP AT lt_matdocs INTO DATA(ls_doc).
+
+      " ── Instantiate business logic class ──
+      " Pass ReverseDocument from already-read data — avoids redundant SELECT
+      DATA(lo_action) = NEW ZCL_MM_MATDOCREV_ACTION(
+        iv_material_document      = ls_doc-MaterialDocument
+        iv_material_document_year = ls_doc-MaterialDocumentYear
+        iv_reverse_document       = ls_doc-ReverseDocument
+      ).
+
+      IF lo_action->execute( ) = abap_true.
+        " ── Success: update global state + return refreshed entity ──
+        lcl_global=>gv_last_reversed_doc  = ls_doc-MaterialDocument.
+        lcl_global=>gv_last_reversed_year = ls_doc-MaterialDocumentYear.
+
+        " result [1] $self → UI auto-refreshes this entity row
+        result = VALUE #( BASE result (
+          %tky   = ls_doc-%tky
+          %param = ls_doc
+        ) ).
+
+      ELSE.
+        " ── Failure: propagate all messages to Fiori UI ──
+        LOOP AT lo_action->get_messages( ) INTO DATA(ls_msg).
+
+          APPEND VALUE #(
+            %tky = ls_doc-%tky
+            %msg = new_message(
+              id       = ls_msg-id
+              number   = ls_msg-number
+              severity = if_abap_behv_message=>severity-error
+              v1       = ls_msg-v1
+              v2       = ls_msg-v2
+              v3       = ls_msg-v3
+              v4       = ls_msg-v4
+            )
+          ) TO reported-matdocrev.
+
+          APPEND VALUE #( %tky = ls_doc-%tky )
+            TO failed-matdocrev.
+
+        ENDLOOP.
+      ENDIF.
+
+    ENDLOOP.
+  ENDMETHOD.
+
+ENDCLASS.
