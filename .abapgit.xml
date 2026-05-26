@@ -23,6 +23,15 @@
     <item>/app/11_ZSD_MM_MATDOCREV_SRV.srvd</item>
     <item>/app/12_ZSB_MM_MATDOCREV_UI.md</item>
     <item>/app/13_ZMMF001_MANIFEST.json</item>
+    <item>/app/zi_mm_matdocrev.ddls</item>
+    <item>/app/zi_mm_matdocrev_item.ddls</item>
+    <item>/app/zc_mm_matdocrev.ddls</item>
+    <item>/app/zc_mm_matdocrev_item.ddls</item>
+    <item>/app/zc_mm_matdocrev.ddlx</item>
+    <item>/app/zc_mm_matdocrev_item.ddlx</item>
+    <item>/app/zi_mm_matdocrev.bdef</item>
+    <item>/app/zc_mm_matdocrev.bdef</item>
+    <item>/app/zsd_mm_matdocrev_srv.srvd</item>
    </IGNORE>
   </DATA>
  </asx:values>
