@@ -1,0 +1,14 @@
+projection;
+strict ( 2 );
+
+define behavior for ZC_MM_MATDOCREV alias MatDocRev
+{
+  use action Cancel;
+
+  use association _item { }
+}
+
+define behavior for ZC_MM_MATDOCREV_ITEM alias MatDocRevItem
+{
+  use association _MatDocRev { }
+}

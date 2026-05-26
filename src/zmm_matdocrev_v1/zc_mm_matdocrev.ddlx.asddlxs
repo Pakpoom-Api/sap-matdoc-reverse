@@ -1,0 +1,145 @@
+@Metadata.layer: #CORE
+@UI: {
+  headerInfo: {
+    typeName:       'Material Document',
+    typeNamePlural: 'Material Documents',
+    title:          { type: #STANDARD, value: 'MaterialDocument' },
+    description:    { type: #STANDARD, value: 'MaterialDocumentHeaderText' }
+  },
+  presentationVariant: [{
+    sortOrder:       [{ by: 'PostingDate', direction: #DESC }],
+    visualizations:  [{ type: #AS_LINEITEM }]
+  }]
+}
+annotate entity ZC_MM_MATDOCREV with
+{
+  /* ═══════════════════════════════════════════
+     SELECTION FIELDS — List Report Filter Bar
+  ═══════════════════════════════════════════ */
+  @UI.selectionField: [{ position: 10 }]
+  MaterialDocument;
+
+  @UI.selectionField: [{ position: 20 }]
+  MaterialDocumentYear;
+
+  @UI.selectionField: [{ position: 30 }]
+  PostingDate;
+
+  @UI.selectionField: [{ position: 40 }]
+  GoodsMovementCode;
+
+  /* ═══════════════════════════════════════════
+     LINE ITEMS — List Report Table Columns
+     + Action Button in List Report Toolbar
+  ═══════════════════════════════════════════ */
+  @UI.lineItem: [
+    { position: 05,
+      type:                #FOR_ACTION,
+      dataAction:          'Cancel',
+      label:               'Reverse Material Document',
+      emphasized:          true },
+    { position: 10,
+      label:               'Material Document',
+      criticality:         'ReversalCriticality',
+      criticalityRepresentation: #WITHOUT_ICON }
+  ]
+  /* ═══════════════════════════════════════════
+     IDENTIFICATION — Object Page Header Area
+     + Action Button in Object Page Header
+  ═══════════════════════════════════════════ */
+  @UI.identification: [
+    { position: 10, label: 'Material Document' },
+    { position: 20,
+      type:      #FOR_ACTION,
+      dataAction: 'Cancel',
+      label:     'Reverse Material Document',
+      emphasized: true }
+  ]
+  /* ═══════════════════════════════════════════
+     FACETS — Object Page Layout
+  ═══════════════════════════════════════════ */
+  @UI.facet: [
+    { id:       'HEADER',
+      type:     #COLLECTION,
+      label:    'Document Header',
+      position: 10 },
+
+    { id:            'HDR_COL1',
+      parentId:      'HEADER',
+      type:          #FIELDGROUP_REFERENCE,
+      targetQualifier: 'HDR_COL1',
+      position:      10,
+      label:         '' },
+
+    { id:            'HDR_COL2',
+      parentId:      'HEADER',
+      type:          #FIELDGROUP_REFERENCE,
+      targetQualifier: 'HDR_COL2',
+      position:      20,
+      label:         '' },
+
+    { id:            'HDR_COL3',
+      parentId:      'HEADER',
+      type:          #FIELDGROUP_REFERENCE,
+      targetQualifier: 'HDR_COL3',
+      position:      30,
+      label:         '' },
+
+    { id:            'ITEMS',
+      type:          #LINEITEM_REFERENCE,
+      label:         'Document Items',
+      position:      20,
+      targetElement: '_item' }
+  ]
+  MaterialDocument;
+
+  @UI.lineItem: [{ position: 20, label: 'Year' }]
+  MaterialDocumentYear;
+
+  @UI.lineItem: [{ position: 30, label: 'Posting Date' }]
+  @UI.fieldGroup: [{ qualifier: 'HDR_COL1', position: 10, label: 'Posting Date' }]
+  PostingDate;
+
+  @UI.lineItem: [{ position: 40, label: 'Document Date' }]
+  @UI.fieldGroup: [{ qualifier: 'HDR_COL1', position: 20, label: 'Document Date' }]
+  DocumentDate;
+
+  @UI.lineItem: [{ position: 50, label: 'Movement Code' }]
+  @UI.fieldGroup: [{ qualifier: 'HDR_COL2', position: 10, label: 'Movement Code' }]
+  GoodsMovementCode;
+
+  @UI.fieldGroup: [{ qualifier: 'HDR_COL2', position: 20, label: 'Header Text' }]
+  MaterialDocumentHeaderText;
+
+  @UI.lineItem: [
+    { position: 60,
+      label:                     'Status',
+      criticality:               'ReversalCriticality',
+      criticalityRepresentation: #WITH_ICON }
+  ]
+  @UI.fieldGroup: [
+    { qualifier:               'HDR_COL3',
+      position:                10,
+      label:                   'Status',
+      criticality:             'ReversalCriticality',
+      criticalityRepresentation: #WITH_ICON }
+  ]
+  IsReversed;
+
+  @UI.lineItem: [{ position: 70, label: 'Reverse Document' }]
+  @UI.fieldGroup: [{ qualifier: 'HDR_COL3', position: 20, label: 'Reverse Document' }]
+  ReverseDocument;
+
+  @UI.fieldGroup: [{ qualifier: 'HDR_COL3', position: 30, label: 'Reverse Year' }]
+  ReverseDocumentYear;
+
+  @UI.lineItem: [{ position: 80, label: 'Created By' }]
+  @UI.fieldGroup: [{ qualifier: 'HDR_COL2', position: 30, label: 'Created By' }]
+  CreatedByUser;
+
+  @UI.fieldGroup: [{ qualifier: 'HDR_COL1', position: 30, label: 'Fiscal Year' }]
+  MaterialDocumentYear;
+
+  @UI.hidden: true
+  ReversalCriticality;
+}
