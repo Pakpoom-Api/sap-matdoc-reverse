@@ -10,6 +10,17 @@
     <item>/README.md</item>
     <item>/setup-github.ps1</item>
     <item>/push-changes.ps1</item>
+    <item>/app/01_ZI_MM_MATDOCREV.ddls</item>
+    <item>/app/02_ZI_MM_MATDOCREV_ITEM.ddls</item>
+    <item>/app/03_ZC_MM_MATDOCREV.ddls</item>
+    <item>/app/04_ZC_MM_MATDOCREV_ITEM.ddls</item>
+    <item>/app/05_ZC_MM_MATDOCREV_MDE.ddlx</item>
+    <item>/app/06_ZC_MM_MATDOCREV_ITEM_MDE.ddlx</item>
+    <item>/app/07_ZI_MM_MATDOCREV_BDEF.bdef</item>
+    <item>/app/08_ZC_MM_MATDOCREV_BDEF.bdef</item>
+    <item>/app/09_ZBP_I_MM_MATDOCREV_CLAS.abap</item>
+    <item>/app/10_ZCL_MM_MATDOCREV_ACTION_CLAS.abap</item>
+    <item>/app/11_ZSD_MM_MATDOCREV_SRV.srvd</item>
     <item>/app/12_ZSB_MM_MATDOCREV_UI.md</item>
     <item>/app/13_ZMMF001_MANIFEST.json</item>
    </IGNORE>

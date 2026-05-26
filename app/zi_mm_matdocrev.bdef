@@ -1,0 +1,18 @@
+unmanaged implementation in class ZBP_I_MM_MATDOCREV unique;
+strict ( 2 );
+
+define behavior for ZI_MM_MATDOCREV alias MatDocRev
+lock master unmanaged
+authorization master ( global )
+{
+  action ( features : instance ) Cancel result [1] $self;
+
+  association _item { }
+}
+
+define behavior for ZI_MM_MATDOCREV_ITEM alias MatDocRevItem
+lock dependent( MatDocRev ) by _MatDocRev
+authorization dependent( MatDocRev ) by _MatDocRev
+{
+  association _MatDocRev { }
+}
