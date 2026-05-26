@@ -4,8 +4,8 @@
 @Metadata.ignorePropagatedAnnotations: true
 @ObjectModel.usageType: {
     serviceQuality: #X,
-    sizeCategory: #M,
-    dataClass: #TRANSACTIONAL
+    sizeCategory:   #M,
+    dataClass:      #TRANSACTIONAL
 }
 define view entity ZI_MM_MATDOCREV_ITEM
   as select from I_MaterialDocumentItem_2

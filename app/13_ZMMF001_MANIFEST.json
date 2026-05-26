@@ -10,17 +10,12 @@
     },
     "title": "{{appTitle}}",
     "description": "{{appDescription}}",
-    "sourceTemplate": {
-      "id": "@sap/generator-fiori-elements.lrop",
-      "version": "1.0.0"
-    },
     "dataSources": {
       "mainService": {
         "uri": "/sap/opu/odata4/sap/zsd_mm_matdocrev_srv/srvd/sap/zsd_mm_matdocrev_srv/0001/",
         "type": "OData",
         "settings": {
-          "odataVersion": "4.0",
-          "annotations": []
+          "odataVersion": "4.0"
         }
       }
     }
@@ -29,12 +24,7 @@
   "sap.ui": {
     "technology": "UI5",
     "icons": {
-      "icon": "sap-icon://decline",
-      "favIcon": "",
-      "phone": "",
-      "phone@2": "",
-      "tablet": "",
-      "tablet@2": ""
+      "icon": "sap-icon://decline"
     },
     "deviceTypes": {
       "desktop": true,
@@ -53,15 +43,15 @@
     "dependencies": {
       "minUI5Version": "1.120.0",
       "libs": {
-        "sap.m":         {},
-        "sap.ui.core":   {},
-        "sap.ushell":    {},
-        "sap.fe.templates": {}
+        "sap.m":              {},
+        "sap.ui.core":        {},
+        "sap.ushell":         {},
+        "sap.fe.templates":   {}
       }
     },
     "contentDensities": {
-      "compact":    true,
-      "cozy":       true
+      "compact": true,
+      "cozy":    true
     },
     "models": {
       "": {
@@ -102,16 +92,14 @@
           "name": "sap.fe.templates.ListReport",
           "options": {
             "settings": {
-              "entitySet": "MatDoc",
+              "entitySet":   "MatDoc",
               "initialLoad": true,
               "controlConfiguration": {
                 "@com.sap.vocabularies.UI.v1.LineItem": {
                   "tableSettings": {
-                    "type":            "ResponsiveTable",
-                    "selectionMode":   "Multi",
-                    "enableExport":    true,
-                    "enablePaste":     false,
-                    "condensedTableLayout": false
+                    "type":          "ResponsiveTable",
+                    "selectionMode": "Multi",
+                    "enableExport":  true
                   }
                 }
               },
@@ -131,15 +119,8 @@
           "name": "sap.fe.templates.ObjectPage",
           "options": {
             "settings": {
-              "entitySet":  "MatDoc",
-              "editableHeaderContent": false,
-              "navigation": {
-                "MatDocItem": {
-                  "detail": {
-                    "route": "MatDocObjectPage"
-                  }
-                }
-              }
+              "entitySet":             "MatDoc",
+              "editableHeaderContent": false
             }
           }
         }
@@ -147,21 +128,3 @@
     }
   }
 }
-
-" ═══════════════════════════════════════════════════════════════════
-" i18n/i18n.properties (create this file alongside manifest.json)
-" ═══════════════════════════════════════════════════════════════════
-"
-" appTitle=Reverse Material Document
-" appDescription=Cancel or reverse SAP Material Documents (MBST equivalent)
-"
-" ═══════════════════════════════════════════════════════════════════
-" Navigation Intent (for Fiori Launchpad tile)
-" ═══════════════════════════════════════════════════════════════════
-"
-" Semantic Object : MM_MatDocRev
-" Action          : manage
-" App ID          : ZMMF001
-" Title           : Reverse Material Document
-" Subtitle        : MBST / MIGO Cancel equivalent
-" Icon            : sap-icon://decline

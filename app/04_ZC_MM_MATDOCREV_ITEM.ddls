@@ -22,9 +22,9 @@ define view entity ZC_MM_MATDOCREV_ITEM
       Plant,
 
       @Consumption.valueHelpDefinition: [{
-        entity: { name: 'I_StorageLocationStdVH', element: 'StorageLocation' },
-        additionalBinding: [{ localElement: 'Plant', element: 'Plant' }],
-        useForValidation: false
+        entity:             { name: 'I_StorageLocationStdVH', element: 'StorageLocation' },
+        additionalBinding:  [{ localElement: 'Plant', element: 'Plant' }],
+        useForValidation:   false
       }]
       StorageLocation,
 

@@ -1,5 +1,5 @@
 # SAP Fiori — Reverse Material Document
-### Enterprise RAP + OData V4 | ZMM_MATDOCREV | MBST/MIGO Cancel Equivalent
+### Enterprise RAP + OData V4 | ZMM_MATDOCREV_V1 | MBST/MIGO Cancel Equivalent
 
 ---
 
@@ -9,7 +9,7 @@ Fiori Elements **List Report + Object Page** application for reversing (cancelli
 
 | Property | Value |
 |---|---|
-| **Package** | `ZMM_MATDOCREV` |
+| **Package** | `ZMM_MATDOCREV_V1` |
 | **Module** | MM — Materials Management |
 | **App ID** | `ZMMF001` |
 | **RAP Type** | Unmanaged · Action-Only · No custom persistent table |
@@ -51,19 +51,19 @@ MODIFY ENTITIES OF i_materialdocumenttp EXECUTE Cancel
 
 | # | File | SAP Object | Type |
 |---|---|---|---|
-| 01 | `01_ZI_MM_MATDOCREV.txt` | `ZI_MM_MATDOCREV` | Interface Root CDS View |
-| 02 | `02_ZI_MM_MATDOCREV_ITEM.txt` | `ZI_MM_MATDOCREV_ITEM` | Interface Item CDS View |
-| 03 | `03_ZC_MM_MATDOCREV.txt` | `ZC_MM_MATDOCREV` | Projection Root CDS View |
-| 04 | `04_ZC_MM_MATDOCREV_ITEM.txt` | `ZC_MM_MATDOCREV_ITEM` | Projection Item CDS View |
-| 05 | `05_ZC_MM_MATDOCREV_MDE.txt` | `ZC_MM_MATDOCREV` | Metadata Extension (Root) |
-| 06 | `06_ZC_MM_MATDOCREV_ITEM_MDE.txt` | `ZC_MM_MATDOCREV_ITEM` | Metadata Extension (Item) |
-| 07 | `07_ZI_MM_MATDOCREV_BDEF.txt` | `ZI_MM_MATDOCREV` | Behavior Definition (Interface) |
-| 08 | `08_ZC_MM_MATDOCREV_BDEF.txt` | `ZC_MM_MATDOCREV` | Behavior Definition (Projection) |
-| 09 | `09_ZBP_I_MM_MATDOCREV_CLAS.txt` | `ZBP_I_MM_MATDOCREV` | Behavior Pool Class |
-| 10 | `10_ZCL_MM_MATDOCREV_ACTION_CLAS.txt` | `ZCL_MM_MATDOCREV_ACTION` | Business Logic Class |
-| 11 | `11_ZSD_MM_MATDOCREV_SRV.txt` | `ZSD_MM_MATDOCREV_SRV` | Service Definition |
-| 12 | `12_ZSB_MM_MATDOCREV_UI.txt` | `ZSB_MM_MATDOCREV_UI` | Service Binding (manual steps) |
-| 13 | `13_ZMMF001_MANIFEST.txt` | `ZMMF001` | Fiori App Manifest |
+| 01 | `01_ZI_MM_MATDOCREV.ddls` | `ZI_MM_MATDOCREV` | Interface Root CDS View |
+| 02 | `02_ZI_MM_MATDOCREV_ITEM.ddls` | `ZI_MM_MATDOCREV_ITEM` | Interface Item CDS View |
+| 03 | `03_ZC_MM_MATDOCREV.ddls` | `ZC_MM_MATDOCREV` | Projection Root CDS View |
+| 04 | `04_ZC_MM_MATDOCREV_ITEM.ddls` | `ZC_MM_MATDOCREV_ITEM` | Projection Item CDS View |
+| 05 | `05_ZC_MM_MATDOCREV_MDE.ddlx` | `ZC_MM_MATDOCREV` | Metadata Extension (Root) |
+| 06 | `06_ZC_MM_MATDOCREV_ITEM_MDE.ddlx` | `ZC_MM_MATDOCREV_ITEM` | Metadata Extension (Item) |
+| 07 | `07_ZI_MM_MATDOCREV_BDEF.bdef` | `ZI_MM_MATDOCREV` | Behavior Definition (Interface) |
+| 08 | `08_ZC_MM_MATDOCREV_BDEF.bdef` | `ZC_MM_MATDOCREV` | Behavior Definition (Projection) |
+| 09 | `09_ZBP_I_MM_MATDOCREV_CLAS.abap` | `ZBP_I_MM_MATDOCREV` | Behavior Pool Class |
+| 10 | `10_ZCL_MM_MATDOCREV_ACTION_CLAS.abap` | `ZCL_MM_MATDOCREV_ACTION` | Business Logic Class |
+| 11 | `11_ZSD_MM_MATDOCREV_SRV.srvd` | `ZSD_MM_MATDOCREV_SRV` | Service Definition |
+| 12 | `12_ZSB_MM_MATDOCREV_UI.md` | `ZSB_MM_MATDOCREV_UI` | Service Binding (manual steps) |
+| 13 | `13_ZMMF001_MANIFEST.json` | `ZMMF001` | Fiori App Manifest |
 
 ---
 
@@ -79,21 +79,23 @@ MODIFY ENTITIES OF i_materialdocumenttp EXECUTE Cancel
 
 ---
 
-## Action: ReverseMaterialDocument
+## Action: Cancel (→ "Reverse Material Document" label on UI)
 
 ```
-User selects document(s) → clicks "Reverse Material Document"
+User selects document(s) → clicks "Reverse Material Document" button
     ↓
 get_instance_features: verify IsReversed ≠ 'X'  (button disabled if already reversed)
     ↓
-lhc_ZI_MM_MATDOCREV::ReverseMaterialDocument
+lhc_ZI_MM_MATDOCREV::Cancel  (MatDocRev~Cancel)
     ↓
-ZCL_MM_MATDOCREV_ACTION::validate_can_reverse()   (pre-check with data from READ ENTITIES)
+ZCL_MM_MATDOCREV_ACTION::validate_can_reverse()   (uses ReverseDocument from READ ENTITIES)
     ↓
 ZCL_MM_MATDOCREV_ACTION::call_eml_cancel()
+    DATA lt_keys TYPE TABLE FOR ACTION IMPORT i_materialdocumenttp~Cancel
     MODIFY ENTITIES OF i_materialdocumenttp
       ENTITY MaterialDocument
       EXECUTE Cancel FROM lt_keys
+      %key-MaterialDocument / %key-MaterialDocumentYear
     ↓
 Propagate reported / failed → Fiori UI toast message
 ```
@@ -159,6 +161,6 @@ Assign `ZBR_MM_MATDOCREV` → create Business Role → assign to users.
 ## Author
 
 - **Developer**: Ta (naypac00@gmail.com)
-- **Package**: `ZMM_MATDOCREV`
+- **Package**: `ZMM_MATDOCREV_V1`
 - **Generated**: 2026-05-22
 - **Reference**: SAP RAP Fiori Skill — Enterprise Standard

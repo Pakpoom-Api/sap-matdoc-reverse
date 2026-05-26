@@ -1,0 +1,76 @@
+@Metadata.layer: #CORE
+@UI: {
+  headerInfo: {
+    typeName:       'Document Item',
+    typeNamePlural: 'Document Items',
+    title:          { type: #STANDARD, value: 'MaterialDocumentItem' },
+    description:    { type: #STANDARD, value: 'Material' }
+  }
+}
+annotate entity ZC_MM_MATDOCREV_ITEM with
+{
+  /* ═══════════════════════════════════════════
+     LINE ITEMS — Items Table on Object Page
+  ═══════════════════════════════════════════ */
+  @UI.lineItem:      [{ position: 10, label: 'Item' }]
+  @UI.identification:[{ position: 10, label: 'Item' }]
+  MaterialDocumentItem;
+
+  @UI.lineItem:      [{ position: 20, label: 'Material' }]
+  @UI.identification:[{ position: 20, label: 'Material' }]
+  Material;
+
+  @UI.lineItem:      [{ position: 30, label: 'Plant' }]
+  @UI.identification:[{ position: 30, label: 'Plant' }]
+  Plant;
+
+  @UI.lineItem:      [{ position: 40, label: 'Stor. Location' }]
+  @UI.identification:[{ position: 40, label: 'Storage Location' }]
+  StorageLocation;
+
+  @UI.lineItem:      [{ position: 50, label: 'Batch' }]
+  @UI.identification:[{ position: 50, label: 'Batch' }]
+  Batch;
+
+  @UI.lineItem:      [{ position: 60, label: 'Mvt Type' }]
+  @UI.identification:[{ position: 60, label: 'Movement Type' }]
+  GoodsMovementType;
+
+  @UI.lineItem:      [{ position: 70, label: 'Quantity' }]
+  @UI.identification:[{ position: 70, label: 'Quantity' }]
+  Quantity;
+
+  @UI.lineItem:      [{ position: 80, label: 'Unit' }]
+  @UI.identification:[{ position: 80, label: 'Unit' }]
+  QuantityUnit;
+
+  @UI.lineItem:      [{ position: 90, label: 'Entry Qty' }]
+  @UI.identification:[{ position: 90, label: 'Entry Quantity' }]
+  EntryQuantity;
+
+  @UI.lineItem:      [{ position: 100, label: 'Entry Unit' }]
+  @UI.identification:[{ position: 100, label: 'Entry Unit' }]
+  EntryUnit;
+
+  @UI.lineItem:      [{ position: 110, label: 'Ref Doc Type' }]
+  @UI.identification:[{ position: 110, label: 'Ref Doc Type' }]
+  GoodsMovementRefDocType;
+
+  @UI.lineItem:      [{ position: 120, label: 'Spec. Stock' }]
+  @UI.identification:[{ position: 120, label: 'Special Stock' }]
+  InventorySpecialStockType;
+
+  @UI.lineItem:      [{ position: 130, label: 'Goods Recipient' }]
+  @UI.identification:[{ position: 130, label: 'Goods Recipient' }]
+  GoodsRecipientName;
+
+  @UI.lineItem:      [{ position: 140, label: 'Unloading Point' }]
+  @UI.identification:[{ position: 140, label: 'Unloading Point' }]
+  UnloadingPointName;
+
+  @UI.hidden: true
+  MaterialDocument;
+
+  @UI.hidden: true
+  MaterialDocumentYear;
+}

@@ -4,8 +4,8 @@
 @Metadata.ignorePropagatedAnnotations: true
 @ObjectModel.usageType: {
     serviceQuality: #X,
-    sizeCategory: #M,
-    dataClass: #TRANSACTIONAL
+    sizeCategory:   #M,
+    dataClass:      #TRANSACTIONAL
 }
 define root view entity ZI_MM_MATDOCREV
   as select from I_MaterialDocumentTP
@@ -19,30 +19,24 @@ define root view entity ZI_MM_MATDOCREV
       MaterialDocumentHeaderText,
       GoodsMovementCode,
 
-      " Reversal reference — used by get_instance_features to disable action
       ReverseDocument,
       ReverseDocumentYear,
 
-      " Admin fields
       @Semantics.user.createdBy: true
       CreatedByUser,
 
       @Semantics.systemDateTime.createdAt: true
       CreationDateTime,
 
-      " Computed reversal status: 'X' = already reversed, ' ' = active
-      case
-        when ReverseDocument is not initial then 'X'
-        else ' '
-      end                  as IsReversed,
+      case when ReverseDocument is not initial
+           then cast( 'X' as abap.char(1) )
+           else cast( ' ' as abap.char(1) )
+      end as IsReversed,
 
-      " Criticality value for UI coloring:
-      " 3 = Error (red icon) when already reversed
-      " 0 = Normal when active
-      case
-        when ReverseDocument is not initial then 3
-        else 0
-      end                  as ReversalCriticality,
+      case when ReverseDocument is not initial
+           then cast( 3 as abap.int1 )
+           else cast( 0 as abap.int1 )
+      end as ReversalCriticality,
 
       _item
 }

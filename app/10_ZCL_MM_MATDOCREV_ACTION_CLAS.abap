@@ -1,10 +1,3 @@
-*&---------------------------------------------------------------------*
-*& Class: ZCL_MM_MATDOCREV_ACTION
-*& Purpose: Business logic — validates + executes material doc reversal
-*& Pattern: EML to call standard BO i_materialdocumenttp~Cancel
-*& Called by: lhc_ZI_MM_MATDOCREV::ReverseMaterialDocument
-*&---------------------------------------------------------------------*
-
 CLASS ZCL_MM_MATDOCREV_ACTION DEFINITION
   PUBLIC
   FINAL
@@ -13,35 +6,30 @@ CLASS ZCL_MM_MATDOCREV_ACTION DEFINITION
   PUBLIC SECTION.
 
     TYPES:
-      " Internal message structure aligned with bapiret2
       BEGIN OF ty_message,
-        id      TYPE symsgid,
-        number  TYPE symsgno,
-        type    TYPE symsgty,
-        v1      TYPE symsgv,
-        v2      TYPE symsgv,
-        v3      TYPE symsgv,
-        v4      TYPE symsgv,
+        id     TYPE symsgid,
+        number TYPE symsgno,
+        type   TYPE symsgty,
+        v1     TYPE symsgv,
+        v2     TYPE symsgv,
+        v3     TYPE symsgv,
+        v4     TYPE symsgv,
       END OF ty_message,
       tt_messages TYPE STANDARD TABLE OF ty_message WITH EMPTY KEY.
 
     METHODS:
-      " Constructor: receive key + pre-read reversal data from handler
+
       constructor
         IMPORTING
           iv_material_document      TYPE mblnr
           iv_material_document_year TYPE mjahr
           iv_reverse_document       TYPE mblnr,
 
-      " Main entry point: validate then execute cancel via EML
       execute
-        RETURNING
-          VALUE(rv_success) TYPE abap_bool,
+        RETURNING VALUE(rv_success) TYPE abap_bool,
 
-      " Return all messages collected during processing
       get_messages
-        RETURNING
-          VALUE(rt_messages) TYPE tt_messages.
+        RETURNING VALUE(rt_messages) TYPE tt_messages.
 
   PRIVATE SECTION.
 
@@ -52,14 +40,11 @@ CLASS ZCL_MM_MATDOCREV_ACTION DEFINITION
       mt_messages               TYPE tt_messages.
 
     METHODS:
-      " Validate document is eligible for reversal (uses pre-read data)
       validate_can_reverse
         RETURNING VALUE(rv_ok) TYPE abap_bool,
 
-      " Execute standard SAP cancel action via EML
       call_eml_cancel,
 
-      " Append a single error message
       append_error
         IMPORTING
           iv_id     TYPE symsgid
@@ -71,38 +56,31 @@ CLASS ZCL_MM_MATDOCREV_ACTION DEFINITION
 
 ENDCLASS.
 
-
 CLASS ZCL_MM_MATDOCREV_ACTION IMPLEMENTATION.
 
   METHOD constructor.
     mv_material_document      = iv_material_document.
     mv_material_document_year = iv_material_document_year.
-    mv_reverse_document       = iv_reverse_document.   " From READ ENTITIES in handler
+    mv_reverse_document       = iv_reverse_document.
   ENDMETHOD.
 
-
   METHOD execute.
-    " Step 1: Pre-validate using data already passed from handler (no extra SELECT)
     IF validate_can_reverse( ) = abap_false.
       rv_success = abap_false.
       RETURN.
     ENDIF.
 
-    " Step 2: Execute EML cancel on standard SAP Material Document BO
     call_eml_cancel( ).
 
-    " Step 3: Determine success — no error-type messages means success
     rv_success = COND #(
-      WHEN mt_messages IS INITIAL THEN abap_true
-      WHEN line_exists( mt_messages[ type = 'E' ] ) OR
-           line_exists( mt_messages[ type = 'A' ] )  THEN abap_false
+      WHEN mt_messages IS INITIAL                      THEN abap_true
+      WHEN line_exists( mt_messages[ type = 'E' ] )    THEN abap_false
+      WHEN line_exists( mt_messages[ type = 'A' ] )    THEN abap_false
       ELSE abap_true
     ).
   ENDMETHOD.
 
-
   METHOD validate_can_reverse.
-    " ── Guard: document already reversed ──
     IF mv_reverse_document IS NOT INITIAL.
       append_error(
         iv_id     = 'ZMM_01'
@@ -118,9 +96,7 @@ CLASS ZCL_MM_MATDOCREV_ACTION IMPLEMENTATION.
     rv_ok = abap_true.
   ENDMETHOD.
 
-
   METHOD call_eml_cancel.
-    " ── Build key table for standard i_materialdocumenttp Cancel action ──
     DATA lt_keys TYPE TABLE FOR ACTION IMPORT i_materialdocumenttp~Cancel
                  WITH EMPTY KEY.
 
@@ -129,7 +105,6 @@ CLASS ZCL_MM_MATDOCREV_ACTION IMPLEMENTATION.
       %key-MaterialDocumentYear = mv_material_document_year
     ) TO lt_keys.
 
-    " ── Execute standard SAP cancel action via EML ──
     MODIFY ENTITIES OF i_materialdocumenttp
       ENTITY MaterialDocument
       EXECUTE Cancel FROM lt_keys
@@ -137,7 +112,6 @@ CLASS ZCL_MM_MATDOCREV_ACTION IMPLEMENTATION.
       FAILED   DATA(lt_failed)
       REPORTED DATA(lt_reported).
 
-    " ── Collect failures ──
     IF lt_failed-materialdocument IS NOT INITIAL.
       append_error(
         iv_id     = 'ZMM_01'
@@ -147,20 +121,13 @@ CLASS ZCL_MM_MATDOCREV_ACTION IMPLEMENTATION.
       ).
     ENDIF.
 
-    " ── Relay SAP reported messages (info / warning / error) ──
     LOOP AT lt_reported-materialdocument INTO DATA(ls_rep)
       WHERE %msg IS NOT INITIAL.
-
-      DATA(lv_type) = COND symsgty(
-        WHEN ls_rep-%msg->if_t100_message~msgty = 'E' THEN 'E'
-        WHEN ls_rep-%msg->if_t100_message~msgty = 'W' THEN 'W'
-        ELSE 'S'
-      ).
 
       APPEND VALUE #(
         id     = ls_rep-%msg->if_t100_message~msgid
         number = ls_rep-%msg->if_t100_message~msgno
-        type   = lv_type
+        type   = ls_rep-%msg->if_t100_message~msgty
         v1     = ls_rep-%msg->if_t100_message~attr1
         v2     = ls_rep-%msg->if_t100_message~attr2
         v3     = ls_rep-%msg->if_t100_message~attr3
@@ -168,7 +135,6 @@ CLASS ZCL_MM_MATDOCREV_ACTION IMPLEMENTATION.
       ) TO mt_messages.
     ENDLOOP.
   ENDMETHOD.
-
 
   METHOD append_error.
     APPEND VALUE #(
@@ -181,7 +147,6 @@ CLASS ZCL_MM_MATDOCREV_ACTION IMPLEMENTATION.
       v4     = iv_v4
     ) TO mt_messages.
   ENDMETHOD.
-
 
   METHOD get_messages.
     rt_messages = mt_messages.

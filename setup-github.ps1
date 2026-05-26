@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    One-click GitHub setup for SAP Fiori — Reverse Material Document (ZMM_MATDOCREV)
+    One-click GitHub setup for SAP Fiori — Reverse Material Document (ZMM_MATDOCREV_V1)
 
 .DESCRIPTION
     This script will:
@@ -42,7 +42,7 @@ Write-Host @"
 
   ╔══════════════════════════════════════════════════════════╗
   ║   SAP Fiori — Reverse Material Document                  ║
-  ║   ZMM_MATDOCREV · GitHub Setup Script                   ║
+  ║   ZMM_MATDOCREV_V1 · GitHub Setup Script                   ║
   ╚══════════════════════════════════════════════════════════╝
 
 "@ -ForegroundColor Cyan
@@ -192,7 +192,7 @@ $status | ForEach-Object { Write-Host "    $_" -ForegroundColor DarkGray }
 
 Write-Step "Creating initial commit"
 $commitMsg = @"
-feat: initial commit - ZMM_MATDOCREV Reverse Material Document RAP app
+feat: initial commit - ZMM_MATDOCREV_V1 Reverse Material Document RAP app
 
 - ZI_MM_MATDOCREV + ZI_MM_MATDOCREV_ITEM
 - ZC_MM_MATDOCREV + ZC_MM_MATDOCREV_ITEM
@@ -230,7 +230,7 @@ Write-Host @"
 "@ -ForegroundColor Green
 
 Write-Host "  Next steps in SAP ADT:" -ForegroundColor White
-Write-Host "  1. Create package ZMM_MATDOCREV" -ForegroundColor DarkGray
+Write-Host "  1. Create package ZMM_MATDOCREV_V1" -ForegroundColor DarkGray
 Write-Host "  2. Copy each artifact from /app/*.txt into ADT objects" -ForegroundColor DarkGray
 Write-Host "  3. Activate in the order shown in README.md" -ForegroundColor DarkGray
 Write-Host "  4. Publish ZSB_MM_MATDOCREV_UI service binding" -ForegroundColor DarkGray

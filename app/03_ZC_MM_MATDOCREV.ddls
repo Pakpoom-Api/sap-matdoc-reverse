@@ -14,20 +14,14 @@ define root view entity ZC_MM_MATDOCREV
       MaterialDocumentHeaderText,
       GoodsMovementCode,
 
-      " Reversal reference fields
       ReverseDocument,
       ReverseDocumentYear,
 
-      " Admin
       CreatedByUser,
       CreationDateTime,
 
-      " Computed status fields (from ZI_ CASE expressions)
       IsReversed,
       ReversalCriticality,
-
-      " Value Help: Plant — exposed via item navigation
-      " (removed invalid cast-to-domain; Plant filter supported via item association)
 
       _item : redirected to composition child ZC_MM_MATDOCREV_ITEM
 }
